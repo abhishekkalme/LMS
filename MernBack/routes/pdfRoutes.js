@@ -3,7 +3,9 @@ const axios = require("axios");
 const router = express.Router();
 
 // ✅ Replace with your Cloudinary cloud name
-const CLOUDINARY_BASE_URL = "cloudinary://853684377233959:fyueVMsk-K_KN6l-94uqMX1Td5w@di0tlevw3";
+// const CLOUDINARY_BASE_URL = "cloudinary://853684377233959:fyueVMsk-K_KN6l-94uqMX1Td5w@di0tlevw3";
+const CLOUDINARY_BASE_URL = "https://res.cloudinary.com/di0tlevw3/raw/upload";
+
 
 router.get("/download/:year/:subjectCode/:unit", async (req, res) => {
   const { year, subjectCode, unit } = req.params;
