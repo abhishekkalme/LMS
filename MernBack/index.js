@@ -14,9 +14,15 @@ const app = express();
 app.use(express.json());
 
 // CORS configuration for frontend (adjust the origin based on your frontend setup)
+
+const allowedOrigins = [
+  "http://localhost:5173", // local development
+  "https://back-lms.onrender.com" // deployed frontend
+];
+
 app.use(
   cors({
-    origin: "https://lmsfront-4dxj.onrender.com", // 👈 Must match your frontend
+    origin: allowedOrigins,
     credentials: true, // 👈 Allow cookies/authorization headers
   })
 );
