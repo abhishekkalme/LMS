@@ -1,26 +1,31 @@
 const express = require("express");
-const path = require("path");
-const fs = require("fs");
+const axios = require("axios");
 const router = express.Router();
 
-// ✅ Base directory where PDFs are stored
-const pdfBaseDirectory = path.join(__dirname, "../pdfs");
+// ✅ Replace with your Cloudinary cloud name
+const CLOUDINARY_BASE_URL = "cloudinary://853684377233959:fyueVMsk-K_KN6l-94uqMX1Td5w@di0tlevw3";
 
-// 📌 Dynamic Route for PDF Download
-router.get("/download/:year/:subjectCode/:unit", (req, res) => {
+router.get("/download/:year/:subjectCode/:unit", async (req, res) => {
   const { year, subjectCode, unit } = req.params;
-  
-  // ✅ Construct file path dynamically based on year, subject, and unit
-  const filePath = path.join(pdfBaseDirectory, year, subjectCode, `${subjectCode}-unit-${unit}.pdf`);
 
-  console.log("Requested file path:", filePath); // Debugging output
+  // ✅ Construct Cloudinary file path
+  const fileUrl = `${CLOUDINARY_BASE_URL}/jit_learning_notes/Notes/${year}/${subjectCode}/${unit}/${subjectCode}-unit-${unit}.pdf`;
 
-  // ✅ Check if file exists
-  if (fs.existsSync(filePath)) {
-    res.download(filePath);
-  } else {
-    console.error("File not found:", filePath);
-    res.status(404).json({ message: "File not found" });
+  try {
+    const response = await axios({
+      method: "GET",
+      url: fileUrl,
+      responseType: "stream",
+    });
+
+    // ✅ Stream the PDF back to the client
+    res.setHeader("Content-Disposition", `attachment; filename="${subjectCode}-unit-${unit}.pdf"`);
+    res.setHeader("Content-Type", "application/pdf");
+
+    response.data.pipe(res);
+  } catch (error) {
+    console.error("Download error:", error.message);
+    res.status(404).json({ message: "File not found in Cloudinary" });
   }
 });
 
