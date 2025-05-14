@@ -1,0 +1,53 @@
+@import './tailwind.css';
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities; 
+
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+   /* Dark background */
+  overflow-x: hidden;
+}
+
+  
+  /* Nice looking thin scrollbar */
+::-webkit-scrollbar {
+    width: 0px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+
+  /* Custom Loading Bar Color */
+/* NProgress Customizations */
+#nprogress {
+    pointer-events: none;
+  }
+  
+  #nprogress .bar {
+    background: #f16363 !important; /* Force override with !important */
+    height: 3px !important;          /* You can adjust the thickness */
+  }
+  
+  /* Optional: Remove spinner if you want */
+  #nprogress .spinner {
+    display: none !important;
+  }
+  
+  
