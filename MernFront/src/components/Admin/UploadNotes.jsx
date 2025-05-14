@@ -44,6 +44,8 @@ const UploadNotes = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true, // ✅ IMPORTANT: send cookie (JWT)
+
         }
       );
 
