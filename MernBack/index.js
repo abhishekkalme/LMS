@@ -16,7 +16,7 @@ app.use(express.json());
 // CORS configuration for frontend (adjust the origin based on your frontend setup)
 app.use(
   cors({
-    origin: "https://mernlms.onrender.com", // 👈 Must match your frontend
+    origin: "https://lmsfront-4dxj.onrender.com", // 👈 Must match your frontend
     credentials: true, // 👈 Allow cookies/authorization headers
   })
 );
