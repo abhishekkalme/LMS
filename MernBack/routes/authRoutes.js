@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
         if (user) return res.status(400).json({ message: "User already exists" });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        user = new User({ name, email, password: hashedPassword, role });
+        user = new User({ name, email, password: hashedPassword, role, provider: 'local' });
 
         await user.save();
         res.status(201).json({ message: "User registered successfully" });
@@ -55,36 +55,36 @@ router.post('/google', async (req, res) => {
     const { token } = req.body;
     console.log("✅ Token received:", token);
 
-
     try {
         const ticket = await client.verifyIdToken({
             idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID,
         });
+
         const payload = ticket.getPayload();
         console.log("✅ Payload:", payload);
 
-        const { email, name, picture } = payload; // ✅ this line defines `email`
+        const { email, name, sub: googleId } = payload;
 
-
-
-    // 2. Check if user already exists
-    let user = await User.findOne({ email });
-    console.log("👀 Existing user:", user);;
+        let user = await User.findOne({ email });
+        console.log("👀 Existing user:", user);
 
         if (!user) {
             user = new User({
-                name: name,
-                email: email,
-                password: "", // password is optional for OAuth
-                googleId: payload.sub,
-                role: "student", // default role for Google users
-                provider: "google",
-
+                name,
+                email,
+                googleId,
+                password: "", // optional since login is via Google
+                role: "student",
+                provider: "google"
             });
-            await user.save();
-            console.log("✅ New user created:", user);
 
+            await user.save().catch(err => {
+                console.error("❌ Error saving Google user:", err);
+                return res.status(500).json({ message: "Failed to save Google user." });
+            });
+
+            console.log("✅ New Google user created:", user);
         }
 
         const authToken = jwt.sign(
@@ -92,8 +92,8 @@ router.post('/google', async (req, res) => {
             process.env.JWT_SECRET || "your_secret_key",
             { expiresIn: "1h" }
         );
-        console.log("✅ Token created:", authToken);
 
+        console.log("✅ Token created:", authToken);
 
         res.status(200).json({
             token: authToken,
